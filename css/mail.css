@@ -1,0 +1,151 @@
+/* /css/mail.css - ESTILO ATUALIZADO PARA O NOVO FLUXO */
+
+:root {
+    --bg-color: #0a0806;
+    --panel-bg: rgba(20, 15, 10, 0.85);
+    --border-color: #3e2723;
+    --text-color: #d4c8b0;
+    --header-color: #f5eeda;
+    --highlight-unread: #a02c2c;
+    --highlight-lore: #4a6e8a;
+    --active-nav: #896e4c;
+}
+
+body {
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    font-family: 'Cormorant Unicase', serif;
+}
+
+/* --- ALTERAÇÕES PRINCIPAIS AQUI --- */
+.geral-container {
+    height: 632.8px;
+    width: 1034px;
+    display: flex;
+    background-image: url("../media/img/bg_mail.png");
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+    
+    /* ADICIONADO: Espaçamento interno e entre os painéis */
+    padding: 35px;
+    gap: 25px; 
+    box-sizing: border-box;
+}
+
+/* --- COLUNA 1: VISUALIZADOR (ESQUERDA) --- */
+#dossier-viewer {
+    /* ADICIONADO: Define como a coluna deve ocupar espaço */
+    flex: 2; /* Ocupará 2 partes do espaço flexível */
+    
+    background: var(--panel-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 25px;
+    display: flex; 
+    flex-direction: column;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.7);
+    overflow-y: auto;
+}
+
+#viewer-default-view { text-align: center; margin: auto; } /* Adicionado margin: auto para centralizar verticalmente */
+.viewer-title { font-size: 2em; color: var(--header-color); margin: 0 0 15px 0; border-bottom: 1px solid rgba(245, 238, 218, 0.2); padding-bottom: 15px; }
+#viewer-illustration { width: 100%; height: 250px; background-image: url('../media/img/background_cliente_sombra.png'); background-size: contain; background-repeat: no-repeat; background-position: center top; opacity: 0.7; margin: 20px 0; filter: sepia(0.3) brightness(0.9); }
+#viewer-text { font-family: 'Special Elite', cursive; font-style: italic; font-size: 1em; line-height: 1.7; }
+
+#viewer-content-view { color: var(--text-color); }
+#viewer-close-btn { display: block; width: 100%; padding: 8px; margin-bottom: 20px; background-color: rgba(255, 255, 255, 0.1); border: 1px solid #4a4a4a; color: var(--header-color); font-family: 'Special Elite', cursive; cursor: pointer; text-align: left; transition: background-color 0.2s; }
+#viewer-close-btn:hover { background-color: rgba(245, 238, 218, 0.2); }
+#viewer-content-title { font-size: 1.8em; margin: 0 0 5px 0; color: var(--header-color); }
+#viewer-content-sender { font-family: 'Roboto Mono', monospace; font-style: italic; color: #a99d86; margin-bottom: 15px; display: block; }
+#viewer-content-body { font-family: 'Special Elite', cursive; font-size: 1.05em; line-height: 1.8; white-space: pre-wrap; }
+#viewer-content-notifications { margin-top: 25px; }
+.lore-unlock-notification { padding: 12px; background-color: rgba(42, 92, 61, 0.8); border-left: 3px solid #a7d0b3; color: #a7d0b3; text-align: center; font-family: 'Special Elite', cursive; margin-top: 10px; animation: fadeInNotify 0.5s ease-out; }
+
+/* --- COLUNA 2: LISTAS (CENTRAL) --- */
+#dossier-main-content {
+    /* ADICIONADO: Define como a coluna deve ocupar espaço */
+    flex: 2; /* Ocupará 2 partes do espaço flexível */
+
+    background: var(--panel-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 25px;
+    position: relative; 
+    overflow: hidden;
+    display: flex; /* Adicionado para controlar filhos internos */
+    flex-direction: column; /* Adicionado para empilhar filhos internos */
+}
+.dossier-list-panel {
+    position: absolute;
+    top: 25px; bottom: 25px; left: 25px; right: 25px;
+    display: flex; flex-direction: column;
+    transition: opacity 0.4s ease-in-out;
+}
+.dossier-list-panel.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+.dossier-list-panel h3 { font-size: 1.5em; color: var(--header-color); margin: 0 0 15px 0; border-bottom: 1px solid rgba(245, 238, 218, 0.2); padding-bottom: 10px; }
+.panel-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
+.mail-card, .lore-item { background: rgba(0, 0, 0, 0.2); padding: 12px; border-radius: 3px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s ease-in-out; border-left: 4px solid transparent; }
+.mail-card:hover, .lore-item:hover { background: rgba(0, 0, 0, 0.4); transform: translateX(3px); }
+.mail-card.active, .lore-item.active { background: rgba(0, 0, 0, 0.6); border-left-color: var(--header-color) !important; }
+.mail-card.unread { border-left-color: var(--highlight-unread); }
+.lore-item { border-left-color: var(--highlight-lore); }
+
+/* --- COLUNA 3: CONTROLES (DIREITA) --- */
+#menu-lateral-direito {
+    /* ADICIONADO: Define como a coluna deve ocupar espaço */
+    flex: 1.5; /* Ocupará 1.5 partes do espaço flexível */
+
+    background: var(--panel-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+}
+
+#dossier-alert-image {
+    width: 100%;
+    height: 150px;
+    background-color: rgba(0,0,0,0.3);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 1px dashed #444;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    transition: background-image 0.5s ease;
+}
+
+.barra-sanidade-container, .barra-veu-container { margin-bottom: 20px; }
+.barra-sanidade-container h3, .barra-veu-container h3 { font-size: 1em; margin: 0 0 8px 0; color: var(--header-color); }
+.barra-sanidade-bg, .veil-bar { width: 100%; padding: 4px; background: rgba(0,0,0,0.5); border: 1px solid #444; border-radius: 10px; box-sizing: border-box; }
+.barra-sanidade-progresso { width: 80%; height: 12px; background: linear-gradient(90deg, #6d1f95, #c055de); border-radius: 8px; transition: width 0.5s; }
+.veil-bar { position: relative; overflow: hidden; height: 20px; }
+.veil-progress { height: 100%; position: absolute; top: 0; width: 0%; transition: width 0.5s ease-in-out; }
+#veil-bar-negative { left: 50%; background: linear-gradient(to left, #8e44ad, #6d1414); transform: translateX(-100%); }
+#veil-bar-positive { left: 50%; background: linear-gradient(to right, #2980b9, #a7d0b3); }
+#veil-status-name { font-size: 0.9em; text-align: center; display: block; margin-top: 5px; }
+
+#dossier-navigation { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.dossier-nav-btn {
+    width: 100%; padding: 10px; font-family: 'Special Elite', cursive; font-size: 1.2em;
+    background-color: rgba(255, 255, 255, 0.1); border: 1px solid #4a4a4a; color: var(--header-color);
+    cursor: pointer; transition: background-color 0.2s;
+}
+.dossier-nav-btn:hover { background-color: rgba(255, 255, 255, 0.2); }
+.dossier-nav-btn.active { background-color: var(--active-nav); border-color: var(--header-color); }
+
+.menu-footer { margin-top: auto; }
+#back-to-game-btn { width: 100%; font-family: 'Special Elite', cursive; font-size: 1.1em; padding: 12px; background-color: var(--border-color); color: var(--header-color); border: 2px solid #1a1a1a; cursor: pointer; transition: background-color 0.2s; }
+#back-to-game-btn:hover { background-color: #5d4037; }
+
+.hidden { display: none !important; }

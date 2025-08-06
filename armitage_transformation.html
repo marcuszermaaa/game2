@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Ascensão</title>
+    <link rel="stylesheet" href="/css/base.css"> <!-- Reutiliza estilos básicos -->
+    <style>
+        body { background-color: #000; color: #ccc; font-family: 'Special Elite', cursive; text-align: center; }
+        #scene-container { position: relative; width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: opacity 2s ease-in-out; }
+        .slide.active { opacity: 1; }
+        #text-overlay { position: absolute; bottom: 10%; left: 10%; right: 10%; background-color: rgba(0,0,0,0.7); padding: 20px; font-size: 1.5em; border-top: 1px solid #555; }
+        #end-button { display: none; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <div id="scene-container">
+        <!-- Slides de imagem de fundo -->
+        <div class="slide" id="slide-1" style="background-image: url('/media/img/ritual_start.png');"></div>
+        <div class="slide" id="slide-2" style="background-image: url('/media/img/armitage_transformation_1.png');"></div>
+        <div class="slide" id="slide-3" style="background-image: url('/media/img/veil_tear.png');"></div>
+        <div class="slide" id="slide-4" style="background-image: url('/media/img/armitage_monster.png');"></div>
+
+        <div id="text-overlay">
+            <p id="scene-text"></p>
+            <button id="end-button" class="btn-salvar">FIM</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const scenes = [
+                { slide: 'slide-1', text: "Você começa o ritual. A tinta flui da agulha para a pele de Armitage, e o sigilo começa a brilhar com uma luz profana.", duration: 6000 },
+                { slide: 'slide-2', text: "A pele dele começa a se contorcer e a se rasgar. Ossos estalam e se realinham em formas impossíveis. Seus gritos de dor rapidamente se transformam em algo gutural, bestial.", duration: 7000 },
+                { slide: 'slide-3', text: "Uma rachadura ofuscante corta o ar acima dele. O Véu se parte. Você pode ver formas e cores de outro universo vazando para o seu estúdio.", duration: 7000 },
+                { slide: 'slide-4', text: "O que antes era o Professor Armitage agora é um portal vivo de carne e loucura. Seus olhos, múltiplos e cegos, se voltam para você. Você cumpriu sua parte do acordo.", duration: 8000 }
+            ];
+
+            const textEl = document.getElementById('scene-text');
+            const endButton = document.getElementById('end-button');
+            let currentScene = 0;
+
+            function playScene() {
+                if (currentScene >= scenes.length) {
+                    textEl.textContent = "A realidade nunca mais será a mesma.";
+                    endButton.style.display = 'block';
+                    endButton.onclick = () => {
+                        localStorage.removeItem('gameState'); // O jogo acaba aqui.
+                        window.location.href = '/index.html';
+                    };
+                    return;
+                }
+
+                const scene = scenes[currentScene];
+                document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+                document.getElementById(scene.slide).classList.add('active');
+                textEl.textContent = scene.text;
+                
+                currentScene++;
+                setTimeout(playScene, scene.duration);
+            }
+
+            playScene(); // Inicia a cena
+        });
+    </script>
+</body>
+</html>

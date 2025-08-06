@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Banimento</title>
+    <link rel="stylesheet" href="/css/base.css">
+    <style>
+        body { background-color: #000; color: #ccc; font-family: 'Special Elite', cursive; }
+        #scene-container { position: relative; width: 1024px; height: 688px; margin: auto; background: url('/media/img/ritual_confrontation_bg.png') no-repeat center; background-size: cover; border: 2px solid #555; }
+        #armitage-hotspot { position: absolute; left: 400px; top: 150px; width: 250px; height: 500px; cursor: pointer; border: 2px dashed transparent; transition: border-color 0.3s; }
+        #armitage-hotspot:hover { border-color: #ff4d4d; }
+        #text-overlay { position: absolute; bottom: 20px; left: 5%; right: 5%; background-color: rgba(0,0,0,0.8); padding: 20px; font-size: 1.3em; text-align: center; }
+        #end-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 100; }
+    </style>
+</head>
+<body>
+
+    <div id="scene-container">
+        <div id="armitage-hotspot" title="Usar a Tinta do Banimento"></div>
+        <div id="text-overlay">
+            <p>Armitage está furioso com sua traição, gritando blasfêmias enquanto o poder do sigilo começa a se manifestar. Você tem apenas uma chance. Use a tinta que Abner pesquisou. Use o sacrifício do seu sangue.</p>
+        </div>
+    </div>
+    
+    <div id="end-screen">
+        <p style="font-size: 1.5em; max-width: 600px; line-height: 1.8;">
+            Você mergulha a agulha na Tinta do Banimento e se lança sobre Armitage. A agulha perfura o sigilo brilhante. Não há gritos de poder, apenas um uivo de agonia pura. A luz profana é sugada para dentro da tatuagem, que se torna um poço de escuridão absoluta. A energia o consome, deixando para trás apenas a casca de um homem, seus olhos fixos em um horror que só ele pode ver. Kett entra correndo... "Você conseguiu... Você o selou."
+        </p>
+        <button id="end-button" class="btn-salvar">Fim do Arco</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const hotspot = document.getElementById('armitage-hotspot');
+            const endScreen = document.getElementById('end-screen');
+            const endButton = document.getElementById('end-button');
+
+            hotspot.addEventListener('click', () => {
+                // Desativa mais interações
+                hotspot.style.display = 'none';
+                document.getElementById('text-overlay').style.display = 'none';
+
+                // Simula o som do ritual
+                new Audio('/media/sfx/banishment_sound.mp3').play();
+
+                // Mostra a tela de resultado final após um delay
+                setTimeout(() => {
+                    endScreen.style.display = 'flex';
+                }, 4000);
+            });
+
+            endButton.addEventListener('click', () => {
+                // Retorna ao jogo para que o gameCore possa processar o resultado e avançar o dia
+                window.location.href = '/game.html';
+            });
+        });
+    </script>
+</body>
+</html>

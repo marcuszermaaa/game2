@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fim do Dia</title>
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/night.css"> <!-- O CSS que vamos criar/atualizar -->
+    <link rel="stylesheet" href="/css/transitions.css">
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Cormorant+Garamond:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body data-transition="fade-from-center" data-music-src="../media/sfx/night_theme.mp3">
+
+    <!-- ✨ NOVO CONTÊINER DE PALCO ✨ -->
+    <!-- Este div agora é o responsável pelo fundo da cena e por centralizar a interface. -->
+    <div id="palco-noite-container">
+
+        <!-- Contêiner principal que abriga tanto o resumo quanto a loja -->
+        <div class="geral-container">
+
+            <!-- Tela 1: Resumo do Dia (Começa visível) -->
+            <div id="summary-view">
+                <div id="end-of-day-summary">
+                    <h3>Reflexões ao Fim do Dia</h3>
+                    <img src="/media/img/ornate_divider.png" alt="divisor" class="divider">
+                    
+                    <div id="summary-stats">
+                        <p id="summary-money">Dinheiro Ganho: <span>$0</span></p>
+                        <p id="summary-sanity">Balanço de Sanidade: <span class="neutral">0</span></p>
+                    </div>
+
+                    <h4>Encontros Marcantes:</h4>
+                    <ul id="summary-relations-list">
+                        <li>Nenhum encontro marcante hoje.</li>
+                    </ul>
+
+                    <div id="summary-achievement-container">
+                        <!-- Conquistas desbloqueadas aparecerão aqui -->
+                    </div>
+                    
+                    <button id="proceed-to-shop-btn" class="btn-salvar">Continuar para a Loja</button>
+                </div>
+            </div>
+
+            <!-- Tela 2: Loja Noturna (Começa escondida com a classe 'hidden') -->
+            <div id="shop-view" class="hidden">
+                <header id="night-header">
+                    <h1 id="night-title">Loja - Noite do Dia X</h1>
+                    <p id="player-money-display">Dinheiro: $--</p>
+                </header>
+
+                <div id="mordecai-visit-container">
+                    <!-- O botão para visitar Mordecai aparecerá aqui se desbloqueado -->
+                </div>
+
+                <main id="shop-layout">
+                    <section id="permanent-upgrades">
+                        <h2>Melhorias Permanentes</h2>
+                        <div class="card-grid">
+                            <!-- Cards de upgrades permanentes gerados pelo JS -->
+                        </div>
+                    </section>
+                    
+                    <section id="consumable-items">
+                        <h2>Itens & Ingredientes</h2>
+                        <div class="card-grid">
+                            <!-- Cards de consumíveis e ingredientes gerados pelo JS -->
+                        </div>
+                    </section>
+                </main>
+                
+                <footer id="main-footer">
+                    <div id="purchase-feedback"></div>
+                    <button id="start-new-day-btn" class="btn-salvar">Iniciar Novo Dia</button>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="./js/applySettings.js" defer></script>
+    <script src="/js/pageTransitions.js"></script>
+    <script type="module" src="/js/night.js"></script>
+</body>
+</html>

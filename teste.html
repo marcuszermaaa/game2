@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minigame - Puzzle Encaixe Final</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #e6e6e6;
+            color: #333;
+            user-select: none;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #3b2a1a;
+        }
+
+        #puzzle-board {
+            position: relative;
+            width: 800px;
+            height: 500px;
+            background-color: #d3c3b0;
+            border-radius: 15px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .map-fragment {
+            position: absolute;
+            cursor: grab;
+            transition: transform 0.2s, box-shadow 0.5s;
+            transform-origin: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            box-sizing: border-box;
+        }
+
+        .map-fragment.dragging {
+            z-index: 100;
+            cursor: grabbing;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        }
+        
+        #frag-01 { width: 100px; height: 200px; }
+        #frag-02, #frag-03 { width: 100px; height: 100px; }
+
+        .snapped {
+            cursor: default;
+            box-shadow: none;
+            z-index: 50;
+        }
+
+        .final-glow {
+            box-shadow: 0 0 20px 10px rgba(46, 139, 87, 0.7);
+        }
+
+        #win-dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #2e8b57;
+            color: white;
+            padding: 30px 50px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            font-size: 1.8em;
+            display: none;
+            z-index: 200;
+        }
+
+        #snap-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #3b2a1a;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 200;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Minigame: Monte o Mapa</h1>
+    <div id="puzzle-board">
+    </div>
+
+    <div id="win-dialog">Parabéns! O mapa está completo!</div>
+    <div id="snap-message"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const puzzleBoard = document.getElementById('puzzle-board');
+            const winDialog = document.getElementById('win-dialog');
+            const snapMessage = document.getElementById('snap-message');
+
+            const pieces = [
+                { id: 'frag-01', src: '/media/img/fragment__01.png', winWidth: 100, winHeight: 200, rotation: 0 },
+                { id: 'frag-02', src: '/media/img/fragment__02.png', winWidth: 100, winHeight: 100, rotation: 0 },
+                { id: 'frag-03', src: '/media/img/fragment__03.png', winWidth: 100, winHeight: 100, rotation: 0 }
+            ];
+
+            const snapMap = {
+                'frag-01': [
+                    { targetId: 'frag-02', mySide: 'right', targetSide: 'left', alignment: 'top' },
+                    { targetId: 'frag-03', mySide: 'right', targetSide: 'left', alignment: 'bottom' }
+                ],
+                'frag-02': [
+                    { targetId: 'frag-01', mySide: 'left', targetSide: 'right', alignment: 'top' }
+                ],
+                'frag-03': [
+                    { targetId: 'frag-01', mySide: 'left', targetSide: 'right', alignment: 'bottom' }
+                ]
+            };
+
+            const initialPositions = [
+                { top: 150, left: 50, rotation: 0 },
+                { top: 250, left: 250, rotation: 0 },
+                { top: 100, left: 400, rotation: 0 }
+            ];
+
+            let snappedConnections = 0;
+
+            pieces.forEach((p, index) => {
+                const img = document.createElement('img');
+                img.id = p.id;
+                img.src = p.src;
+                img.className = 'map-fragment';
+                img.style.width = `${p.winWidth}px`;
+                img.style.height = `${p.winHeight}px`;
+                img.style.top = `${initialPositions[index].top}px`;
+                img.style.left = `${initialPositions[index].left}px`;
+                img.style.transform = `rotate(${initialPositions[index].rotation}deg)`;
+                img.dataset.rotation = initialPositions[index].rotation;
+                img.isSnapped = false;
+                puzzleBoard.appendChild(img);
+            });
+
+            let activeItem = null;
+            let xOffset = 0, yOffset = 0;
+            const tolerance = 20;
+
+            const rotatePiece = (piece) => {
+                if (!piece.isSnapped) {
+                    let currentRotation = parseInt(piece.dataset.rotation || '0');
+                    currentRotation = (currentRotation + 90) % 360;
+                    piece.style.transform = `rotate(${currentRotation}deg)`;
+                    piece.dataset.rotation = currentRotation;
+                }
+            };
+
+            const dragStart = (e) => {
+                if (e.target.classList.contains('map-fragment') && !e.target.isSnapped) {
+                    activeItem = e.target;
+                    activeItem.classList.add('dragging');
+
+                    const rect = activeItem.getBoundingClientRect();
+                    const boardRect = puzzleBoard.getBoundingClientRect();
+                    xOffset = e.clientX - (rect.left - boardRect.left);
+                    yOffset = e.clientY - (rect.top - boardRect.top);
+
+                    puzzleBoard.addEventListener('mousemove', drag);
+                }
+            };
+
+            const drag = (e) => {
+                if (activeItem) {
+                    e.preventDefault();
+
+                    const newLeft = e.clientX - xOffset;
+                    const newTop = e.clientY - yOffset;
+
+                    activeItem.style.left = `${newLeft}px`;
+                    activeItem.style.top = `${newTop}px`;
+                }
+            };
+
+            const dragEnd = () => {
+                if (activeItem) {
+                    activeItem.classList.remove('dragging');
+                    checkSnapping(activeItem);
+                    activeItem = null;
+                    puzzleBoard.removeEventListener('mousemove', drag);
+                }
+            };
+
+            const checkSnapping = (piece) => {
+                const pieceRect = piece.getBoundingClientRect();
+
+                pieces.forEach(otherPieceDef => {
+                    const otherPiece = document.getElementById(otherPieceDef.id);
+                    // AQUI ESTAVA O ERRO: REMOVIDO otherPiece.isSnapped
+                    if (!otherPiece || piece.id === otherPiece.id) return;
+
+                    const otherPieceRect = otherPiece.getBoundingClientRect();
+                    const snapRules = snapMap[piece.id];
+
+                    if (!snapRules) return;
+
+                    snapRules.forEach(rule => {
+                        if (rule.targetId === otherPiece.id) {
+                            let shouldSnap = false;
+                            let newTop = pieceRect.top, newLeft = pieceRect.left;
+
+                            if (rule.mySide === 'right' && rule.targetSide === 'left') {
+                                if (Math.abs(pieceRect.right - otherPieceRect.left) < tolerance) {
+                                    if (rule.alignment === 'top' && Math.abs(pieceRect.top - otherPieceRect.top) < tolerance) {
+                                        newLeft = otherPieceRect.left - pieceRect.width;
+                                        newTop = otherPieceRect.top;
+                                        shouldSnap = true;
+                                    } else if (rule.alignment === 'bottom' && Math.abs(pieceRect.bottom - otherPieceRect.bottom) < tolerance) {
+                                        newLeft = otherPieceRect.left - pieceRect.width;
+                                        newTop = otherPieceRect.bottom - pieceRect.height;
+                                        shouldSnap = true;
+                                    }
+                                }
+                            } else if (rule.mySide === 'left' && rule.targetSide === 'right') {
+                                if (Math.abs(pieceRect.left - otherPieceRect.right) < tolerance) {
+                                    if (rule.alignment === 'top' && Math.abs(pieceRect.top - otherPieceRect.top) < tolerance) {
+                                        newLeft = otherPieceRect.right;
+                                        newTop = otherPieceRect.top;
+                                        shouldSnap = true;
+                                    } else if (rule.alignment === 'bottom' && Math.abs(pieceRect.bottom - otherPieceRect.bottom) < tolerance) {
+                                        newLeft = otherPieceRect.right;
+                                        newTop = otherPieceRect.bottom - pieceRect.height;
+                                        shouldSnap = true;
+                                    }
+                                }
+                            }
+                            
+                            if (shouldSnap && !piece.isSnapped) {
+                                const boardRect = puzzleBoard.getBoundingClientRect();
+                                piece.isSnapped = true;
+                                piece.classList.add('snapped', 'final-glow');
+                                piece.style.left = `${newLeft - boardRect.left}px`;
+                                piece.style.top = `${newTop - boardRect.top}px`;
+                                
+                                otherPiece.isSnapped = true;
+                                otherPiece.classList.add('snapped', 'final-glow');
+                                
+                                snappedConnections++;
+
+                                snapMessage.textContent = `Peça "${piece.id}" encaixou em "${otherPiece.id}"!`;
+                                snapMessage.style.opacity = '1';
+                                snapMessage.style.display = 'block';
+                                setTimeout(() => {
+                                    snapMessage.style.opacity = '0';
+                                    setTimeout(() => { snapMessage.style.display = 'none'; }, 500);
+                                }, 2000);
+                                
+                                checkWin();
+                            }
+                        }
+                    });
+                });
+            };
+
+            const checkWin = () => {
+                if (snappedConnections === pieces.length - 1) {
+                    setTimeout(() => winDialog.style.display = 'block', 500);
+                }
+            };
+            
+            puzzleBoard.addEventListener('click', (e) => {
+                const clickedPiece = e.target.closest('.map-fragment');
+                if (clickedPiece && !clickedPiece.isSnapped) {
+                    rotatePiece(clickedPiece);
+                }
+            });
+            
+            puzzleBoard.addEventListener('mousedown', dragStart);
+            document.addEventListener('mouseup', dragEnd);
+            puzzleBoard.addEventListener('mouseleave', dragEnd);
+        });
+    </script>
+</body>
+</html>

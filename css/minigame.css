@@ -1,0 +1,158 @@
+/* css/minigame.css - VERSÃO VISUALMENTE APRIMORADA COM ANIMAÇÕES DE GUIA */
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #0c0a09;
+    color: #f0ead6;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+body::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    box-shadow: inset 0 0 150px rgba(0,0,0,0.7);
+    pointer-events: none;
+    z-index: 100;
+}
+
+.game-wrapper {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    padding: 20px;
+    gap: 20px;
+    box-sizing: border-box;
+}
+
+#menu-panel {
+    flex: 0 0 280px;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid #443a34;
+    border-radius: 5px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+#sigil-reference-display {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px dashed #5a4e46;
+}
+
+#sigil-reference-display h4 {
+    margin: 0 0 10px 0;
+    font-family: 'Special Elite', cursive;
+    color: #e6b85c;
+    font-size: 1.1em;
+}
+
+#sigil-reference-canvas {
+    background-color: #f5eeda;
+    border: 1px solid #c9bda5;
+    border-radius: 3px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+#minigame-container {
+    flex-grow: 1;
+    display: flex;
+    position: relative;
+}
+
+#canvas-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background-image: url('../media/img/pele_textura.png');
+    background-size: cover;
+    border: 2px solid #5a4e46;
+    box-shadow: inset 0 0 35px rgba(0,0,0,0.9);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#tattoo-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: url('../media/img/icons/agulha_cursor.png') 4 30, crosshair;
+}
+
+/* ✨ KEYFRAMES PARA A ANIMAÇÃO DE PULSO DOS PONTOS-GUIA ✨ */
+@keyframes pulse {
+    0% { transform: scale(0.95); opacity: 0.7; }
+    70% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0.7; }
+}
+
+/* Aplica a animação no ponto de início */
+#tattoo-canvas .start-node-pulse {
+    animation: pulse 2s infinite ease-in-out;
+}
+
+
+.comment-box {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    background-color: rgba(12, 10, 9, 0.9);
+    padding: 15px 30px;
+    border-radius: 5px;
+    font-family: 'Special Elite', cursive;
+    font-size: 1.3em;
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s, transform 0.4s;
+    pointer-events: none;
+    z-index: 10;
+    transform: translate(-50%, 20px);
+}
+
+.comment-box.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%);
+}
+
+.comment-box.success {
+    color: #90ee90;
+    border: 1px solid #2e8b57;
+    text-shadow: 0 0 5px #90ee90;
+}
+
+.comment-box.error {
+    color: #ff6b6b;
+    border: 1px solid #c0392b;
+    text-shadow: 0 0 5px #ff6b6b;
+}
+
+#minigame-debug-panel {
+    margin-top: auto;
+    padding: 15px;
+    border: 1px dashed #e6b85c;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    text-align: center;
+}
+
+#minigame-debug-panel.hidden { display: none; }
+#minigame-debug-panel h4 { margin: 0 0 10px 0; color: #e6b85c; font-family: 'Special Elite', cursive; }
+#minigame-debug-panel button {
+    width: 100%; padding: 8px; margin-top: 8px;
+    border-radius: 3px; font-family: 'Special Elite', cursive;
+    font-size: 1em; color: #f0ead6; cursor: pointer;
+    transition: all 0.2s ease; border: 1px solid rgba(255,255,255,0.4);
+}
+#minigame-debug-panel button:hover { transform: scale(1.02); filter: brightness(1.2); }
+#debug-win-btn { background-color: #1b4d3e; }
+#debug-lose-btn { background-color: #6d2020; }

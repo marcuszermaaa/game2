@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bancada de Trabalho Arcana</title>
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/workbench.css">
+    <link rel="stylesheet" href="/css/transitions.css">
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Cormorant+Garamond&display=swap" rel="stylesheet">
+</head>
+<body data-transition="fade-from-right">
+
+    <div id="workbench-container">
+        <!-- Coluna da Esquerda: Inventário e Lista de Receitas -->
+        <aside id="sidebar">
+            <div id="inventory-panel">
+                <h3>Inventário de Ingredientes</h3>
+                <ul id="inventory-list">
+                    <!-- O JS preencherá aqui -->
+                    <li class="placeholder">Nenhum ingrediente.</li>
+                </ul>
+            </div>
+            <div id="recipe-panel">
+                <h3>Receitas Conhecidas</h3>
+                <ul id="recipe-list">
+                    <!-- O JS preencherá aqui -->
+                    <li class="placeholder">Nenhuma receita conhecida.</li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Área Principal: As Estações de Trabalho -->
+        <main id="main-area">
+            <div id="station-tabs">
+                <button class="station-tab active" data-station="station-alchemy">Alquimia</button>
+                <button class="station-tab" data-station="station-assembly">Montagem</button>
+                <button class="station-tab" data-station="station-research">Pesquisa</button>
+            </div>
+            
+            <div id="station-content">
+                <!-- Estação de Alquimia (Padrão) -->
+                <div id="station-alchemy" class="station active">
+                    <div id="alchemy-grid">
+                        <div id="slot-reagent-1" class="reagent-slot" data-slot-index="0"></div>
+                        <div id="slot-reagent-2" class="reagent-slot" data-slot-index="1"></div>
+                        <div id="slot-reagent-3" class="reagent-slot" data-slot-index="2"></div>
+                    </div>
+                    <div id="alchemy-controls">
+                        <button id="craft-button" disabled>Forjar</button>
+                        <div id="craft-result"></div>
+                    </div>
+                </div>
+
+                <!-- Estação de Montagem (Para o puzzle dos fragmentos) -->
+         <div id="station-assembly" class="station">
+    <div id="assembly-board">
+        <!-- O JS adicionará os fragmentos que o jogador possui aqui -->
+    </div>
+    <!-- ✨ ESTE É O ELEMENTO QUE ESTAVA FALTANDO OU COM O ID ERRADO ✨ -->
+    <div id="assembly-feedback" class="feedback-text">
+        <!-- O JS preencherá esta mensagem -->
+    </div>
+</div>
+
+                <!-- Estação de Pesquisa (Decodificador de César) -->
+                <div id="station-research" class="station">
+                    <div id="caesar-cipher-tool">
+                        <h3>Decodificador de César</h3>
+                        <div class="cipher-flex-container">
+                            <div class="cipher-column">
+                                <label for="cipher-input">Texto Cifrado</label>
+                                <textarea id="cipher-input" rows="10" placeholder="Cole o texto codificado aqui..."></textarea>
+                            </div>
+                            <div class="cipher-slider-column">
+                                <label for="cipher-shift">Deslocamento</label>
+                                <input type="range" id="cipher-shift" min="-13" max="13" value="3" class="vertical-slider">
+                                <span id="shift-value">3</span>
+                            </div>
+                            <div class="cipher-column">
+                                <label>Texto Decifrado</label>
+                                <div id="cipher-output-container"><p id="cipher-output">[O resultado aparecerá aqui]</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <button id="back-to-game-btn" class="btn-return">Voltar ao Estúdio</button>
+
+    <script src="/js/applySettings.js"></script>
+    <script src="/js/pageTransitions.js"></script>
+    <script type="module" src="/js/workbench.js"></script>
+</body>
+</html>

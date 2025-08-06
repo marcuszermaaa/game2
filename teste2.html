@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exploração do Estúdio - Point & Click Engine v2</title>
+    <style>
+        body { margin: 0; background-color: #000; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: 'Special Elite', cursive; }
+        @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+
+        #game-container { position: relative; width: 1024px; height: 688px; background-size: cover; border: 2px solid #333; box-shadow: 0 0 25px rgba(0,0,0,0.8); overflow: hidden; }
+        
+        /* ✨ ESTILOS DO CURSOR DINÂMICO ✨ */
+        #game-container.cursor-inspect { cursor: url('/media/img/icons/eye_cursor.png') 16 16, auto; }
+        #game-container.cursor-interact { cursor: url('/media/img/icons/hand_cursor.png') 16 16, auto; }
+        #game-container.cursor-nav-right { cursor: url('/media/img/icons/nav_right_cursor.png') 16 16, auto; }
+        #game-container.cursor-nav-left { cursor: url('/media/img/icons/nav_left_cursor.png') 16 16, auto; }
+
+        .hotspot { position: absolute; display: none; background-color: rgba(255, 255, 100, 0.0); border: 2px dashed rgba(255, 255, 100, 0.0); transition: all 0.2s; }
+        .hotspot:hover { background-color: rgba(255, 255, 100, 0.3); border-color: #ffc107; }
+
+        #ui-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        
+        #message-box { position: absolute; bottom: 90px; left: 0; width: 100%; text-align: center; pointer-events: none; }
+        #message-box span { background-color: rgba(0,0,0,0.8); color: #ccc; padding: 15px 25px; font-size: 1.2em; line-height: 1.6; border-radius: 5px; border: 1px solid #333; }
+
+        #inventory { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; background-color: rgba(0,0,0,0.7); padding: 10px; border-radius: 5px; border: 1px solid #444; pointer-events: all; }
+        .inventory-slot { width: 64px; height: 64px; border: 2px solid #555; background-color: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; }
+        .inventory-item { width: 90%; height: 90%; background-size: contain; background-repeat: no-repeat; background-position: center; cursor: pointer; }
+        .inventory-item.selected { filter: drop-shadow(0 0 5px #ffc107); }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <div id="ui-overlay">
+            <div id="message-box"><span></span></div>
+            <div id="inventory"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- DADOS DO JOGO (O que estaria em arquivos .js separados) ---
+        const SCENE_DATA = {
+            'main_studio': {
+                name: "Estúdio Principal",
+                backgroundUrl: '/media/img/bg.png' // ✨ FUNDO DE GAME.HTML ✨
+            },
+            'back_office': {
+                name: "Escritório de Abner",
+                backgroundUrl: '/media/img/bg_journal.png' // ✨ FUNDO DE JOURNAL.HTML ✨
+            }
+        };
+
+        const HOTSPOTS_DATA = {
+            'main_studio': [
+                { id: 'goto_office', rect: { x: 850, y: 200, width: 150, height: 350 }, onTrigger: { action: { type: 'goto_scene', payload: 'back_office' } }, cursor: 'nav_right' },
+                { id: 'loose_floorboard', rect: { x: 100, y: 550, width: 150, height: 80 }, onTrigger: { message: "Uma tábua no assoalho parece solta. Você a levanta e encontra uma pequena chave ornamentada.", action: { type: 'add_inventory_item', payload: 'ornate_key' } }, revealCondition: (state) => !state.inventory.includes('ornate_key'), cursor: 'interact' }
+            ],
+            'back_office': [
+                { id: 'goto_studio', rect: { x: 20, y: 200, width: 100, height: 350 }, onTrigger: { action: { type: 'goto_scene', payload: 'main_studio' } }, cursor: 'nav_left' },
+                { id: 'locked_box', rect: { x: 700, y: 550, width: 120, height: 80 }, requires: 'ornate_key', onTrigger: { message: "Você usa a chave. A fechadura estala e a caixa se abre. Dentro, uma página rasgada do diário de Abner.", action: { type: 'unlock_lore', payload: 'abner_diary_secret' } }, defaultMessage: "Uma pequena caixa de madeira com uma fechadura complexa. Está trancada.", cursor: 'inspect' }
+            ]
+        };
+        
+        const INVENTORY_ITEMS_DATA = {
+            'ornate_key': { name: "Chave Ornamentada", iconUrl: '/media/img/icons/ornate_key.png' }
+        };
+
+        // --- ENGINE DE POINT & CLICK ---
+        class PointClickEngine {
+            constructor() {
+                this.container = document.getElementById('game-container');
+                this.messageBox = document.getElementById('message-box').querySelector('span');
+                this.inventoryContainer = document.getElementById('inventory');
+                this.hotspots = [];
+                this.messageTimeout = null;
+                
+                this.gameState = {
+                    currentScene: 'main_studio',
+                    inventory: [],
+                    selectedItem: null,
+                    unlockedLore: []
+                };
+
+                this.container.addEventListener('mousemove', (e) => this.updateCursor(e));
+                this.container.addEventListener('click', (e) => this.handleClick(e));
+            }
+
+            start() {
+                this.loadScene(this.gameState.currentScene);
+                this.renderInventory();
+            }
+
+            loadScene(sceneId) {
+                this.gameState.currentScene = sceneId;
+                const scene = SCENE_DATA[sceneId];
+                this.container.style.backgroundImage = `url('${scene.backgroundUrl}')`;
+                this.hotspots = HOTSPOTS_DATA[sceneId] || [];
+                this.renderHotspots();
+                this.showMessage(`Você está em: ${scene.name}`);
+            }
+
+            renderHotspots() {
+                this.container.querySelectorAll('.hotspot').forEach(el => el.remove());
+                this.hotspots.forEach(hotspotData => {
+                    if (hotspotData.revealCondition && !hotspotData.revealCondition(this.gameState)) {
+                        return;
+                    }
+                    const div = document.createElement('div');
+                    div.id = hotspotData.id;
+                    div.className = 'hotspot';
+                    Object.assign(div.style, {
+                        left: `${hotspotData.rect.x}px`, top: `${hotspotData.rect.y}px`,
+                        width: `${hotspotData.rect.width}px`, height: `${hotspotData.rect.height}px`
+                    });
+                    div.dataset.hotspotId = hotspotData.id;
+                    div.style.display = 'block';
+                    this.container.appendChild(div);
+                });
+            }
+
+            handleClick(event) {
+                if (event.target.classList.contains('hotspot')) {
+                    this.triggerHotspot(event.target.dataset.hotspotId);
+                }
+            }
+
+            triggerHotspot(id) {
+                const hotspot = this.hotspots.find(h => h.id === id);
+                if (!hotspot) return;
+
+                if (hotspot.requires && hotspot.requires === this.gameState.selectedItem) {
+                    this.showMessage(hotspot.onTrigger.message);
+                    this.executeAction(hotspot.onTrigger.action);
+                    // Remove o item usado do inventário
+                    this.gameState.inventory = this.gameState.inventory.filter(item => item !== this.gameState.selectedItem);
+                    this.deselectItem();
+                    this.renderInventory();
+                } else {
+                    const message = hotspot.defaultMessage || hotspot.onTrigger.message;
+                    this.showMessage(message);
+                    if (!hotspot.requires) {
+                        this.executeAction(hotspot.onTrigger.action);
+                    }
+                }
+            }
+
+            executeAction(action) {
+                if (!action) return;
+                switch (action.type) {
+                    case 'add_inventory_item':
+                        if (!this.gameState.inventory.includes(action.payload)) {
+                            this.gameState.inventory.push(action.payload);
+                            this.renderInventory();
+                            this.renderHotspots(); // Re-renderiza para esconder o hotspot do item pego
+                        }
+                        break;
+                    case 'goto_scene':
+                        this.loadScene(action.payload);
+                        break;
+                    case 'unlock_lore':
+                        if (!this.gameState.unlockedLore.includes(action.payload)) {
+                            this.gameState.unlockedLore.push(action.payload);
+                        }
+                        break;
+                }
+                console.log("Estado do Jogo Atualizado:", this.gameState);
+            }
+
+            renderInventory() {
+                this.inventoryContainer.innerHTML = '';
+                Object.keys(INVENTORY_ITEMS_DATA).forEach(itemId => {
+                    const itemData = INVENTORY_ITEMS_DATA[itemId];
+                    if (this.gameState.inventory.includes(itemId)) {
+                        const slot = document.createElement('div');
+                        slot.className = 'inventory-slot';
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'inventory-item';
+                        itemDiv.style.backgroundImage = `url('${itemData.iconUrl}')`;
+                        itemDiv.title = itemData.name;
+                        itemDiv.dataset.itemId = itemId;
+                        itemDiv.onclick = (e) => {
+                            e.stopPropagation();
+                            this.selectItem(itemId);
+                        };
+                        slot.appendChild(itemDiv);
+                        this.inventoryContainer.appendChild(slot);
+                    }
+                });
+            }
+
+            selectItem(itemId) {
+                if (this.gameState.selectedItem === itemId) {
+                    this.deselectItem();
+                } else {
+                    this.gameState.selectedItem = itemId;
+                    this.inventoryContainer.querySelectorAll('.inventory-item').forEach(el => el.classList.remove('selected'));
+                    this.inventoryContainer.querySelector(`[data-item-id="${itemId}"]`).classList.add('selected');
+                    this.container.style.cursor = `url('${INVENTORY_ITEMS_DATA[itemId].iconUrl}') 16 16, auto`;
+                }
+            }
+            
+            deselectItem() {
+                if (this.gameState.selectedItem) {
+                    this.inventoryContainer.querySelector(`[data-item-id="${this.gameState.selectedItem}"]`)?.classList.remove('selected');
+                }
+                this.gameState.selectedItem = null;
+                this.container.style.cursor = ''; // Volta ao cursor padrão
+            }
+
+            updateCursor(event) {
+                if (this.gameState.selectedItem) return; // Se um item está selecionado, o cursor não muda
+                if (event.target.classList.contains('hotspot')) {
+                    const hotspot = this.hotspots.find(h => h.id === event.target.dataset.hotspotId);
+                    if (hotspot && hotspot.cursor) {
+                        this.container.className = `cursor-${hotspot.cursor}`;
+                    }
+                } else {
+                    this.container.className = '';
+                }
+            }
+
+            showMessage(text) {
+                clearTimeout(this.messageTimeout);
+                this.messageBox.textContent = text;
+                this.messageBox.style.opacity = 1;
+                this.messageTimeout = setTimeout(() => {
+                    this.messageBox.style.opacity = 0;
+                }, 4000);
+            }
+        }
+
+        // --- INICIALIZAÇÃO ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // ✨ CRIE OS ÍCONES DO CURSOR na pasta /media/img/icons/
+            // eye_cursor.png, hand_cursor.png, nav_left_cursor.png, nav_right_cursor.png
+            const engine = new PointClickEngine();
+            engine.start();
+        });
+    </script>
+</body>
+</html>

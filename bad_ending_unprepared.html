@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impreparado</title>
+    <link rel="stylesheet" href="/css/base.css">
+    <style>
+        body { background-color: #000; color: #ccc; font-family: 'Special Elite', cursive; text-align: center; }
+        #scene-container { position: relative; width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: url('/media/img/ritual_start.png') no-repeat center; background-size: cover; }
+        #text-overlay { background-color: rgba(0,0,0,0.8); padding: 30px; border: 1px solid #333; }
+        #text-overlay h2 { font-size: 2.5em; color: #ff4d4d; }
+        #text-overlay p { font-size: 1.4em; }
+        #end-button { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div id="scene-container">
+        <div id="text-overlay">
+            <h2>Você Falhou</h2>
+            <p>Você o confronta, mas não tem nada para detê-lo. Armitage ri de sua ingenuidade.<br>"Você tinha o conhecimento de Abner, mas não a coragem para o sacrifício final."<br>Ele o domina com facilidade. Seus últimos momentos são passados assistindo ao Véu se rasgar enquanto ele ascende.</p>
+            <button id="end-button" class="btn-salvar">FIM</button>
+        </div>
+    </div>
+    <script>
+        document.getElementById('end-button').addEventListener('click', () => {
+            localStorage.removeItem('gameState'); // Fim de jogo definitivo
+            window.location.href = '/index.html';
+        });
+    </script>
+</body>
+</html>

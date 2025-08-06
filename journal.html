@@ -1,0 +1,146 @@
+<!<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+   <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Unicase:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <title>Escritorio do Abner</title>
+    <!-- Links de fontes e CSS... -->
+    <link rel="stylesheet" href="./css/journal.css">
+    <link rel="stylesheet" href="./css/base.css">
+    <link rel="stylesheet" href="/css/transitions.css">
+</head>
+<body data-transition="fade-from-right" data-music-src="../media/sfx/abner_theme.mp3">
+    <div id="journal-book" class="geral-container">
+        <div class="palco-container">
+            
+            <div id="popup-item-detalhes" class="hidden">
+                <h4 id="popup-nome-item">Nome do Item</h4>
+                <p id="popup-descricao-item">Descrição detalhada do item.</p>
+            </div>
+            <div id="popup-sigil-detalhes" class="hidden">
+                <h4 id="popup-nome-sigil"></h4>
+                <p id="popup-descricao-sigil"></p>
+            </div>
+            
+            <div class="cenas-container">
+                <!-- CENA DE INVENTÁRIO -->
+                <div id="cena-inventario" class="cena hidden">
+                    <div class="conteudo-cena">
+                        <h2>Inventário</h2>
+                        <ul id="lista-inventario"></ul>
+                    </div>
+                </div>
+
+              <!-- CENA DE VÍNCULOS -->
+<!-- Em journal.html -->
+
+<!-- CENA DE VÍNCULOS -->
+<div id="cena-vinculos" class="cena hidden">
+    <div class="conteudo-cena">
+        <h2>Vínculos</h2>
+        <ul class="menu-vinculos">
+            <li><p data-alvo="vinculos-cronicas" class="active">Crônicas</p></li>
+            <li><p data-alvo="vinculos-bestiario">Bestiário</p></li>
+            <li><p data-alvo="vinculos-criptografia">Criptografia</p></li>
+        </ul>
+
+        <div class="vinculos-conteudo-container">
+            <div id="vinculos-cronicas" class="conteudo-vinculos-secao"></div>
+            <div id="vinculos-bestiario" class="conteudo-vinculos-secao hidden">
+                <div class="bestiario-container">
+                    <div class="bestiario-display">
+                        <img id="bestiario-display-img" src="" alt="Imagem da criatura">
+                        <h3 id="bestiario-display-nome">Selecione uma criatura</h3>
+                        <p id="bestiario-display-desc">A descrição aparecerá aqui.</p>
+                    </div>
+                    <div id="bestiario-lista" class="bestiario-lista"></div>
+                </div>
+            </div>
+            
+            <!-- ✨ CORREÇÃO APLICADA AQUI ✨ -->
+          <!-- Em journal.html -->
+
+<div id="vinculos-criptografia" class="conteudo-vinculos-secao hidden">
+    <!-- ✨ ESTRUTURA DO DECODIFICADOR COMPLETAMENTE REFEITA ✨ -->
+    <div id="caesar-cipher-tool">
+        <h3>Decodificador de César</h3>
+        <div class="cipher-flex-container">
+            <!-- Coluna da Esquerda: Texto Cifrado -->
+            <div class="cipher-column">
+                <label for="cipher-input">Texto Cifrado</label>
+                <textarea id="cipher-input" rows="10" placeholder="Cole o texto codificado aqui..."></textarea>
+            </div>
+
+            <!-- Coluna Central: Slider Vertical -->
+            <div class="cipher-slider-column">
+                <label for="cipher-shift">Deslocamento</label>
+                <input type="range" id="cipher-shift" min="-13" max="13" value="3" class="vertical-slider">
+                <span id="shift-value">3</span>
+            </div>
+
+            <!-- Coluna da Direita: Texto Decifrado -->
+            <div class="cipher-column">
+                <label>Texto Decifrado</label>
+                <div id="cipher-output-container">
+                    <p id="cipher-output">[O resultado aparecerá aqui]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        </div>
+
+    </div>
+</div>
+
+                <!-- CENA DE SELEÇÃO DE SIGILOS -->
+                <div id="cena-selecao-sigilos" class="cena hidden">
+                    <div class="conteudo-cena">
+                        <h2>Selecionar Sigilo</h2>
+                        <div id="sigil-selection-grid"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <aside id="menu-lateral-direito">
+                <div class="display-sigilo">
+                    <h3 id="sigilo-ativo-nome">Nenhum Sigilo</h3>
+                    <div id="sigilo-ativo-img" alt="Sigilo Ativo"></div> <!-- Mantido como div por enquanto -->
+                </div>
+                <div class="barra-sanidade-container">
+                    <h3>Sanidade</h3>
+                    <div id="bg_sanidade">
+                        <div class="barra-sanidade"><div class="barra-sanidade-progresso"></div></div>
+                    </div>
+                    <!-- A barra do véu já está no seu HTML, perfeito. -->
+                    <div id="veil-alignment-container">
+                        <div class="veil-bar">
+                            <div id="veil-bar-negative" class="veil-progress"></div>
+                            <div id="veil-bar-positive" class="veil-progress"></div>
+                        </div>
+                        <span id="veil-status-name">Praticante</span>
+                    </div>
+                </div>
+   
+                <ul id="menu-navegacao-principal">
+                    <li id="btn-sigilos" class="btn-menu" data-sound-click="page_turn">Sigilos</li>
+                    <li id="btn-inventario" class="btn-menu" data-sound-click="page_turn">Inventário</li>
+                    <li id="btn-vinculos" class="btn-menu" data-sound-click="page_turn">Vínculos</li>
+                </ul>
+                
+                <div class="menu-footer">
+                    <button id="back-to-game-btn" class="btn-salvar">VOLTAR</button>
+                </div>
+            </aside>
+        </div>
+    </div>
+         <script src="./js/applySettings.js" defer></script>
+<script src="./js/pageTransitions.js"  ></script>
+    <script type="module" src="js/journal.js"></script>
+</body>
+</html>marcus
+

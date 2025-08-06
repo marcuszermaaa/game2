@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Nascimento</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+        body { margin: 0; background-color: #000; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: 'Special Elite', cursive; overflow: hidden; }
+        #scene-container { position: relative; width: 1024px; height: 688px; background: url('/media/img/birthing_chamber_bg.png') no-repeat center center; background-size: cover; border: 2px solid #333; }
+        .hotspot { position: absolute; background-color: rgba(255, 0, 0, 0.0); transition: background-color 0.2s; }
+        .hotspot:hover { background-color: rgba(255, 100, 100, 0.2); border: 1px solid red; }
+        #message-box { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: rgba(0,0,0,0.8); color: #ccc; padding: 15px 25px; font-size: 1.2em; border-radius: 5px; width: 80%; text-align: center; opacity: 0; transition: opacity 0.5s; }
+    </style>
+</head>
+<body>
+    <div id="scene-container">
+        <!-- Hotspot para a Sra. Pickman (agora a Rainha da Ninhada) -->
+        <div class="hotspot" id="hotspot-queen" style="left: 350px; top: 200px; width: 300px; height: 400px;"></div>
+        <!-- Hotspot para a porta trancada -->
+        <div class="hotspot" id="hotspot-door" style="left: 850px; top: 150px; width: 150px; height: 450px;"></div>
+        <!-- Hotspot para a mesa ritualística com a chave -->
+        <div class="hotspot" id="hotspot-table" style="left: 50px; top: 450px; width: 250px; height: 150px;"></div>
+        
+        <div id="message-box"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const messageBox = document.getElementById('message-box');
+            const audioHeartbeat = new Audio('/media/sfx/heartbeat.mp3');
+            audioHeartbeat.loop = true;
+            audioHeartbeat.volume = 0.4;
+            audioHeartbeat.play();
+
+            let hasKey = false;
+            let gameEnded = false;
+
+            function showMessage(text) {
+                messageBox.textContent = text;
+                messageBox.style.opacity = 1;
+                setTimeout(() => { messageBox.style.opacity = 0; }, 5000);
+            }
+
+            document.getElementById('hotspot-queen').addEventListener('click', () => {
+                if (gameEnded) return;
+                showMessage("Não ouso chegar mais perto. O corpo dela se contorce em espasmos... O nascimento é iminente. Preciso sair daqui AGORA.");
+            });
+
+            document.getElementById('hotspot-table').addEventListener('click', () => {
+                if (gameEnded) return;
+                if (hasKey) {
+                    showMessage("Eu já peguei a chave. Não há mais nada de útil aqui, apenas instrumentos de tortura e alquimia profana.");
+                } else {
+                    showMessage("Em meio a velas negras e poças de um líquido amniótico escuro, vejo uma chave de ferro enferrujada. Minha única esperança.");
+                    hasKey = true;
+                }
+            });
+
+            document.getElementById('hotspot-door').addEventListener('click', () => {
+                if (gameEnded) return;
+                if (hasKey) {
+                    gameEnded = true;
+                    audioHeartbeat.pause();
+                    new Audio('/media/sfx/door_unlock.mp3').play();
+                    
+                    showMessage("A chave gira com um estalo alto. Eu abro a porta e fujo, mas não antes de ouvir um grito agudo e multifacetado atrás de mim... o som de um nascimento e de uma morte, tudo em um só.");
+                    
+                    // Salva o resultado para o gameCore processar
+                    const outcome = {
+                        success: true,
+                        survived: true
+                    };
+                    localStorage.setItem('birthingChamberOutcome', JSON.stringify(outcome));
+                    
+                    // Retorna ao jogo principal após um delay dramático
+                    setTimeout(() => {
+                        window.location.href = '/game.html';
+                    }, 6000);
+
+                } else {
+                    showMessage("A porta está trancada por fora! Estou preso aqui com... aquilo!");
+                }
+            });
+
+            showMessage("Você está na mansão Pickman. O ar é pesado, com um cheiro metálico e adocicado. O som rítmico e úmido de um coração pulsando ecoa pela sala.");
+        });
+    </script>
+</body>
+</html>

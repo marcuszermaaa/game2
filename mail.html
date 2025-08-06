@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dossiê do Ocultista</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Unicase:wght@700&family=Special+Elite&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/mail.css">
+    <link rel="stylesheet" href="/css/transitions.css">
+</head>
+<body data-transition="fade-from-right" data-ambient-src="../media/sfx/ambient_library.mp3" data-ambient-volume="0.1" data-ambient-fade-duration="5000">
+
+    <div class="geral-container">
+        <!-- Coluna 1: O Visualizador de Conteúdo -->
+        <div id="dossier-viewer">
+            <div id="viewer-default-view">
+                <h2 class="viewer-title">Dossiê de Elias</h2>
+                <div id="viewer-illustration"></div>
+                <p id="viewer-text">"Selecione um item nas listas para examiná-lo em detalhes."</p>
+            </div>
+            <div id="viewer-content-view" class="hidden">
+                <button id="viewer-close-btn">← Voltar para a lista</button>
+                <h3 id="viewer-content-title"></h3>
+                <span id="viewer-content-sender"></span>
+                <hr>
+                <div id="viewer-content-body"></div>
+                <div id="viewer-content-notifications"></div>
+            </div>
+            <!-- Div para futuros eventos de imagem, como um jumpscare -->
+            <div id="viewer-special-image" class="hidden"></div>
+        </div>
+
+        <!-- Coluna 2: A Área de Listas (central) -->
+        <div id="dossier-main-content">
+            <!-- Container da Lista de Tomos -->
+            <div id="lore-list-container" class="dossier-list-panel hidden">
+                <h3>Tomos e Anotações</h3>
+                <ul class="panel-list" id="lore-list"></ul>
+            </div>
+            <!-- Container da Lista de Cartas -->
+            <div id="mail-list-container" class="dossier-list-panel hidden">
+                <h3>Caixa de Entrada</h3>
+                <ul class="panel-list" id="mail-list"></ul>
+            </div>
+        </div>
+
+        <!-- Coluna 3: O Painel de Controle (direita) -->
+        <div id="menu-lateral-direito">
+            <div id="dossier-alert-image">
+                <!-- Imagem de alerta inserida por JS -->
+            </div>
+                <p id="dossier-alert-name"></p>
+
+            <div class="barra-sanidade-container">
+                <h3>Sanidade</h3>
+                <div class="barra-sanidade-bg">
+                    <div class="barra-sanidade-progresso"></div>
+                </div>
+            </div>
+
+            <div class="barra-veu-container">
+                <h3>Alinhamento com o Véu</h3>
+                <div class="veil-bar">
+                    <div id="veil-bar-negative" class="veil-progress"></div>
+                    <div id="veil-bar-positive" class="veil-progress"></div>
+                </div>
+                <span id="veil-status-name">Praticante</span>
+            </div>
+
+            <nav id="dossier-navigation">
+                <button class="dossier-nav-btn" data-target="mail-list-container">Cartas</button>
+                <button class="dossier-nav-btn" data-target="lore-list-container">Tomos</button>
+            </nav>
+
+            <div class="menu-footer">
+                <button id="back-to-game-btn">Voltar ao Estúdio</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/applySettings.js"></script>
+    <script type="module" src="/js/pageTransitions.js"></script>
+    <script type="module" src="/js/mail.js"></script>
+
+</body>
+</html>

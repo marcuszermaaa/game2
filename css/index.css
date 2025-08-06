@@ -1,0 +1,364 @@
+/* Estilos principais para a página de menu */
+body {
+    font-family: 'Cormorant Garamond', serif; /* Fonte principal com um toque clássico */
+    background-color: var(--background-color); /* Fundo escuro geral definido em base.css */
+    color: var(--text-color); /* Cor principal do texto definida em base.css */
+    display: flex;
+    justify-content: center; /* Centraliza o conteúdo horizontalmente */
+    align-items: center; /* Centraliza o conteúdo verticalmente */
+    min-height: 100vh; /* Garante que o corpo ocupe pelo menos toda a altura da viewport */
+    margin: 0; /* Remove margens padrão do navegador */
+
+    /* Background com gradiente escuro e um padrão SVG sutil de textura */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><pattern id="texture" patternUnits="userSpaceOnUse" width="200" height="200"><image href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JzyAAAAAXNSR0IArs4c6QAAAAxJREFUGFdjYBgFoAABAAHl+c34AAAAAElFTkSuQmCC" width="2" height="2" /></pattern></defs><rect width="100%" height="100%" fill="url(%23texture)" /></svg>');
+    background-size: cover; /* Faz o background cobrir toda a área */
+    background-position: center; /* Centraliza o background */
+    position: relative; /* Necessário para o pseudo-elemento ::before */
+}
+
+/* Pseudo-elemento para adicionar uma camada escura adicional sobre o background */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Cor escura semi-transparente */
+    z-index: 0; /* Fica atrás do conteúdo principal */
+}
+
+/* Container principal do menu */
+#menu-container {
+    text-align: center; /* Centraliza o texto dentro do container */
+    background-color: var(--panel-bg-color); /* Fundo escuro semi-transparente para o menu, definido em base.css */
+    padding: 30px; /* Espaçamento interno, alinhando com o padrão base */
+    border-radius: 8px; /* Bordas arredondadas, alinhando com o padrão base */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5); /* Sombra, alinhando com o padrão base */
+    position: relative; /* Necessário para o z-index */
+    z-index: 1; /* Garante que o menu fique acima das camadas de background */
+    border: 1px solid var(--border-color); /* Borda padrão definida em base.css */
+}
+
+/* Título principal do menu */
+h1 {
+    font-family: 'Special Elite', cursive; /* Fonte estilizada para o título */
+    font-size: 2.5em; /* Tamanho da fonte grande, mantendo destaque */
+    color: var(--header-color); /* Cor de destaque para o título, definida em base.css */
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.5); /* Sombra suave no texto */
+    margin-bottom: 25px; /* Espaçamento abaixo do título */
+}
+
+/* Estilos para os botões de opção do menu */
+#menu-options button {
+    /* Replicando e adaptando os estilos de botão de base.css */
+    font-family: 'Special Elite', cursive; /* Fonte estilizada para botões */
+    font-size: 1.1em; /* Tamanho da fonte, alinhado com botões base */
+    padding: 12px 25px; /* Espaçamento interno, alinhado com botões base */
+    margin: 5px 0; /* Margem vertical única, alinhado com botões base */
+    display: block; /* Cada botão ocupa sua própria linha */
+    width: 100%; /* Ocupa a largura disponível */
+    max-width: 250px; /* Largura máxima, alinhada com botões base */
+    background-color: var(--button-bg); /* Cor de fundo padrão dos botões */
+    color: var(--text-color); /* Cor do texto padrão */
+    border: 1px solid var(--border-color); /* Borda padrão */
+    border-radius: 5px; /* Bordas arredondadas padrão */
+    cursor: pointer; /* Indica que o elemento é clicável */
+    transition: background-color 0.3s ease, transform 0.1s ease; /* Transições suaves */
+    box-sizing: border-box; /* Garante que padding e border não afetem a largura total */
+}
+
+/* Efeito hover para os botões (exceto quando desabilitados) */
+#menu-options button:hover:not(:disabled) {
+    background-color: var(--button-hover-bg); /* Cor de fundo mais escura ao passar o mouse */
+    transform: translateY(-2px); /* Efeito de leve elevação */
+}
+
+/* Efeito ao clicar nos botões (exceto quando desabilitados) */
+#menu-options button:active:not(:disabled) {
+    transform: translateY(0); /* Retorna à posição original */
+    background-color: var(--button-hover-bg); /* Mantém a cor hover ao clicar */
+}
+
+/* Estilos para botões desabilitados */
+#menu-options button:disabled {
+    opacity: 0.6; /* Reduz a opacidade */
+    cursor: not-allowed; /* Indica que não é possível interagir */
+    transform: none; /* Remove efeitos de transform */
+}
+
+/* Mensagem geral exibida no menu */
+#menu-message {
+    font-family: 'Cormorant Garamond', serif; /* Fonte principal */
+    font-size: 1.1em; /* Tamanho da fonte, alinhado com texto base */
+    margin-top: 20px; /* Espaçamento acima da mensagem */
+    color: var(--text-color); /* Cor do texto padrão */
+    font-weight: normal;
+}
+
+/* Mensagem de confirmação */
+#confirmation-message {
+    font-family: 'Cormorant Garamond', serif; /* Fonte principal */
+    font-size: 1.1em; /* Tamanho da fonte, alinhado com texto base */
+    margin-top: 20px; /* Espaçamento acima da mensagem */
+    font-weight: bold; /* Negrito para destaque */
+    color: var(--accent-color); /* Usa a cor de acento para ênfase, definida em base.css */
+}
+
+/* Animação de piscar para elementos */
+@keyframes blink-animation {
+    0%, 100% { opacity: 1; } /* Totalmente opaco */
+    50% { opacity: 0.4; } /* Semi-transparente */
+}
+
+/* Classe para aplicar a animação de piscar */
+.blinking {
+    animation: blink-animation 1s infinite;
+}
+
+/* Media queries para responsividade */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2.2em; /* Título menor em telas médias */
+    }
+    #menu-options button {
+        max-width: 200px; /* Botões menores */
+        font-size: 1.1em;
+        padding: 10px 15px;
+    }
+    #menu-container {
+        padding: 25px 35px; /* Espaçamento interno reduzido */
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.8em; /* Título ainda menor em telas pequenas */
+    }
+    #menu-options button {
+        max-width: 180px; /* Botões ainda menores */
+        font-size: 1.0em;
+        padding: 8px 12px;
+        margin: 8px auto;
+    }
+    #menu-container {
+        padding: 20px 20px; /* Espaçamento interno reduzido */
+        margin: 10px; /* Adiciona margem para não colar nas bordas */
+    }
+}
+
+/* Adicione estas regras ao seu /css/index.css */
+
+#menu-options button:disabled {
+    background-color: #333; /* Fundo mais escuro */
+    color: #666; /* Texto apagado */
+    cursor: not-allowed; /* Ícone do cursor para indicar que não é clicável */
+    border-color: #444;
+}
+
+#menu-options button:disabled:hover {
+    transform: none; /* Remove o efeito de hover */
+    box-shadow: none; /* Remove a sombra do hover */
+}
+
+/* Estilo para a mensagem de feedback */
+.feedback-message {
+    margin-top: 20px;
+    color: #ccc;
+    font-size: 1em;
+    font-family: 'Cormorant Garamond', serif;
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+/* /css/index.css - ADICIONE NO FINAL DO ARQUIVO */
+
+/* --- Estilização do Painel de Configurações --- */
+#settings-panel {
+    border-top: 1px solid #444;
+    padding-top: 15px;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.setting-item label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1em;
+    margin-right: 15px;
+}
+
+/* --- Estilização do Dropdown Customizado --- */
+.custom-select-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 180px; /* Largura do dropdown */
+}
+
+.custom-select-wrapper select {
+    /* Aparência do <select> em si */
+    width: 100%;
+    padding: 8px 12px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1em;
+    color: #ddd;
+    background-color: #2a2a2a;
+    border: 1px solid #555;
+    border-radius: 4px;
+    cursor: pointer;
+    
+    /* Remove a aparência padrão do navegador */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+.debug-btn.danger { background-color: #9e2a2b; }
+.debug-btn.danger:hover { background-color: #7d2222; }
+ul#lore-unlocked-list, ul#arc-completed-list { font-size: 0.9em; color: #ccc; margin-left: 20px; }
+
+/* Cria uma seta customizada usando um pseudo-elemento */
+.custom-select-wrapper::after {
+    content: '▼'; /* Símbolo da seta */
+    font-size: 0.8em;
+    color: #888;
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    pointer-events: none; /* Garante que os cliques passem para o <select> abaixo */
+}
+
+/* --- Estilização dos Itens de Debug --- */
+#money-input {
+    width: 80px;
+    padding: 8px;
+    background-color: #2a2a2a;
+    border: 1px solid #555;
+    color: #ddd;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.debug-btn {
+    padding: 8px 12px;
+    font-size: 0.9em;
+    background-color: #4a2323;
+    border-color: #833d3d;
+}
+.debug-btn:hover {
+    background-color: #6d3434;
+}
+
+/* Estilo para botões e inputs de debug desabilitados */
+#money-input:disabled, .debug-btn:disabled {
+    background-color: #333;
+    color: #666;
+    cursor: not-allowed;
+    border-color: #444;
+}/* css/index.css - ADICIONE ESTAS REGRAS */
+
+#debug-options fieldset {
+    border: 1px solid #444;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+#debug-options legend {
+    font-family: 'Special Elite', cursive;
+    color: #c0b090;
+    background-color: #1a1a1a;
+    padding: 0 10px;
+    font-size: 1.1em;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #333;
+}
+
+.setting-item:last-child {
+    border-bottom: none;
+}
+
+.setting-item-column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 8px 0;
+}
+
+.setting-item-column label {
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #c0b090;
+}
+
+.debug-btn.danger {
+    background-color: #9e2a2b;
+}
+
+.debug-btn.danger:hover {
+    background-color: #7d2222;
+}
+
+ul#lore-unlocked-list, ul#arc-completed-list, ul#recipe-list-display {
+    font-size: 0.9em;
+    color: #ccc;
+    margin-left: 20px;
+    list-style-type: square;
+    font-family: 'Roboto Mono', monospace;
+}/* css/index.css - ADICIONE ESTA REGRA */
+
+#settings-panel {
+    /* Define uma altura máxima para o painel. 
+       '80vh' significa 80% da altura da janela do navegador. 
+       Você pode ajustar este valor se preferir. */
+    max-height: 80vh;
+
+    /* Esta é a mágica. Se o conteúdo ultrapassar a altura máxima, 
+       uma barra de rolagem vertical aparecerá. */
+    overflow-y: auto;
+
+    /* Adiciona um pouco de espaço interno na direita para a barra 
+       de rolagem não ficar colada no conteúdo. */
+    padding-right: 15px;
+}
+
+/* Opcional: Estilização da barra de rolagem para combinar com o tema escuro (funciona em navegadores WebKit como Chrome/Edge) */
+#settings-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+#settings-panel::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 4px;
+}
+
+#settings-panel::-webkit-scrollbar-thumb {
+    background-color: #444;
+    border-radius: 4px;
+    border: 1px solid #1a1a1a;
+}.btn-debug-special {
+    width: 100%;
+    margin-top: 10px;
+    background-color: #4a2a3a; /* Uma cor sinistra */
+    border: 1px solid #7a5a6a;
+}
+.btn-debug-special:hover:not(:disabled) {
+    background-color: #6a4a5a;
+}.debug-controls.vertical {
+    flex-direction: column;
+}
